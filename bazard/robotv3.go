@@ -10,11 +10,12 @@ import (
 
 var Client *bitfinex.Client
 var monnaie string = "XRPUSD"
+var monnaies []string
 
 func main() {
 
 	
-	monnaies := [...]string{"BTCUSD","BCHUSD","BTGUSD","DSHUSD","ZECUSD","XRPUSD","ETHUSD"}
+	monnaies = [...]string{"BTCUSD","BCHUSD","BTGUSD","DSHUSD","ZECUSD","XRPUSD","ETHUSD"}
 	var str bytes.Buffer
 	for _,pair := range monnaies {
 		pair = strings.ToUpper(pair)
