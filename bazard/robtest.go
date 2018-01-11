@@ -19,7 +19,7 @@ func main() {
 
 	var ret int = 0
 
-	ret,wstoch=utils.Init(monnaie,LogStoch,4)
+	ret=utils.Init(monnaie,LogStoch,4)
 	if ret == 1 {return}
 
 	trc.Trace.Printf("fin : (%d) \n",ret)
