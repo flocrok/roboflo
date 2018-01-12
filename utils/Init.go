@@ -26,28 +26,20 @@ func Init(monnaie string,LogStoch int,level int) int {
 
 	var ret int
 
-	fmt.Printf("debug 4\n")
 	ret = LectureParam() 
 	if ret == 1 {return 1}
-	fmt.Printf("debug 5\n")
 
 	ret = trc.Init(level,monnaie)
 	if ret == 1 {return 1}
-	fmt.Printf("debug 6\n")
 
 	ret=Initv2(monnaie,LogStoch)
 	if ret == 1 {return 1}
-	
-	fmt.Printf("debug 7\n")
 
 	ret = Initv1()
 	if ret == 1 {return 1}
-	fmt.Printf("debug 8\n")
 	
 	trc.Info.Println("Init terminée")
 	fmt.Println("Init terminée")
-	
-	fmt.Printf("debug 9\n")
 
 	return 0
 }

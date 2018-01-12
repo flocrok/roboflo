@@ -2,55 +2,63 @@ package utils
 
 import (
 	"fmt"
-	"github.com/bitfinexcom/bitfinex-api-go/v1"
+    "github.com/bitfinexcom/bitfinex-api-go/v2"
 	"time"
     "bufio"
 	"os"
+	"strings"
 )
 
-var monnaies [4]string = [...]string{"BTCUSD","DSHUSD","BCHUSD","SANUSD"}
+var monnaies []string = []string{"tBTCUSD","tDSHUSD","tBCHUSD","tSANUSD"}
 const nbmonnaies int = 4
 var index int = 3
 
 
 func RecupMonnaies() {
 
-//	monnaies = [...]string{"BTCUSD","DSHUSD","BCHUSD","SANUSD"}
+	// monnaies := []string{"tBTCUSD","tDSHUSD","tBCHUSD","tSANUSD"}
 	var filename string
 	var file *os.File
 	var err error
 	var w *bufio.Writer
 	var monnaie string
-	var Tick bitfinex.Tick
+	var Tick bitfinex.Ticker
 
-	index++
-	if index == nbmonnaies {
-		index = 0
-	}
-	monnaie = monnaies[index]
+	tickers,err := Clientv2.Tickers.Get(strings.Join(monnaies,","))
 
-	Tick, err = Client.Ticker.Get(monnaie)
-	
 	if err != nil {
 		fmt.Println("Error : ", err)
-		fmt.Printf("Ticker - %s - %s\n",
-					monnaie,time.Now().Format("2006-01-02;15:04:05.999"))
+		fmt.Printf("Tickers - %s - %s\n",
+					monnaies,time.Now().Format("2006-01-02;15:04:05.999"))
+		return
 	}
-
-	filename = fmt.Sprintf("TickerFile_%s_%s.log",monnaie,time.Now().Format("2006-01-02"))
-	file, err = os.OpenFile(filename,os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0666)
-	if err != nil {
-		fmt.Printf("File does not exists or cannot be created - %s - %s\n",
-					filename,time.Now().Format("2006-01-02;15:04:05.999"))
-		os.Exit(1)
-	}
-
-	w = bufio.NewWriter(file)
-
-	fmt.Fprintf(w,"%s;%s;%v;%v;%v;%v\n",monnaie,time.Now().Format("2006-01-02;15:04:05.999"),
-	Tick.Bid,Tick.Ask,Tick.LastPrice,Tick.Volume)
 	
-	w.Flush()
-	file.Close()
+	nbtickers:=len(tickers)
+	// fmt.Printf("nbtickers : %v \n",nbtickers)
+	
+	for i:=nbtickers-1;i>=0; i-- {
+		// fmt.Printf("Ticker : %v \n",tickers[i])
+		Tick = tickers[i]
+		monnaie = strings.Split(Tick.Symbol,"t")[1]
+		// fmt.Printf("monnaie : %v \n",monnaie)
+
+		filename = fmt.Sprintf("TickerFile_%s_%s.log",monnaie,time.Now().Format("2006-01-02"))
+		file, err = os.OpenFile(filename,os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0666)
+		if err != nil {
+			fmt.Printf("File does not exists or cannot be created - %s - %s\n",
+						filename,time.Now().Format("2006-01-02;15:04:05.999"))
+			os.Exit(1)
+		}
+
+		w = bufio.NewWriter(file)
+
+		fmt.Fprintf(w,"%s;%s;%v;%v;%v;%v\n",monnaie,time.Now().Format("2006-01-02;15:04:05.999"),
+		Tick.Bid,Tick.Ask,Tick.LastPrice,Tick.Volume)
+		
+		w.Flush()
+		file.Close()
+
+
+	}
 
 }

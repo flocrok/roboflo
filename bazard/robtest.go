@@ -24,4 +24,8 @@ func main() {
 
 	trc.Trace.Printf("fin : (%d) \n",ret)
 
+	utils.RecupMonnaies()
+
+
+
 }
